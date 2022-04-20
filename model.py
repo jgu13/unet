@@ -69,4 +69,3 @@ def unet(pretrained_weights = None,input_size = (256,256,1), concate=True, expan
     	model.load_weights(pretrained_weights)
 
     return model
-
