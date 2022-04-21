@@ -80,8 +80,8 @@ def trainGenerator(batch_size,train_path,image_folder,mask_folder,aug_dict,image
         img,mask = adjustData(img,mask,flag_multi_class,num_class)
         yield (img,mask)
 
-def construct_image_name(**args):
-  image_name = args[0]+args[1]+args[2]
+def construct_image_name(*args):
+  image_name = "".join(args)
   return image_name
 
 def testGenerator(test_path,num_image_indices=range(30),target_size = (256,256),image_prefix="",image_suffix='.png',flag_multi_class = False,as_gray = True):
