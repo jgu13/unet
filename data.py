@@ -23,18 +23,19 @@ COLOR_DICT = np.array([Sky, Building, Pole, Road, Pavement,
                           Tree, SignSymbol, Fence, Car, Pedestrian, Bicyclist, Unlabelled])
 
 
-def adjustData(img,mask,flag_multi_class,num_class):
+def adjustData(img,mask,flag_multi_class):
     if(flag_multi_class):
         img = img / 255
         mask = mask[:,:,:,0] if(len(mask.shape) == 4) else mask[:,:,0]
-        new_mask = np.zeros(mask.shape + (num_class,))
+        num_class = int(np.max(mask)) + 1
+        new_mask = np.zeros(mask.shape + (num_class,),np.int64)
         for i in range(num_class):
             #for one pixel in the image, find the class in mask and convert it into one-hot vector
             #index = np.where(mask == i)
             #index_mask = (index[0],index[1],index[2],np.zeros(len(index[0]),dtype = np.int64) + i) if (len(mask.shape) == 4) else (index[0],index[1],np.zeros(len(index[0]),dtype = np.int64) + i)
             #new_mask[index_mask] = 1
             new_mask[mask == i,i] = 1
-        new_mask = np.reshape(new_mask,(new_mask.shape[0],new_mask.shape[1]*new_mask.shape[2],new_mask.shape[3])) if flag_multi_class else np.reshape(new_mask,(new_mask.shape[0]*new_mask.shape[1],new_mask.shape[2]))
+#         new_mask = np.reshape(new_mask,(new_mask.shape[0],new_mask.shape[1]*new_mask.shape[2],new_mask.shape[3])) if flag_multi_class else np.reshape(new_mask,(new_mask.shape[0]*new_mask.shape[1],new_mask.shape[2]))
         mask = new_mask
     elif(np.max(img) > 1):
         img = img / 255
@@ -77,7 +78,7 @@ def trainGenerator(batch_size,train_path,image_folder,mask_folder,aug_dict,image
         seed = seed)
     train_generator = zip(image_generator, mask_generator)
     for (img,mask) in train_generator:
-        img,mask = adjustData(img,mask,flag_multi_class,num_class)
+        img,mask = adjustData(img,mask,flag_multi_class)
         yield (img,mask)
 
 def construct_image_name(*args):
