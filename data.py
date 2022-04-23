@@ -22,21 +22,23 @@ Unlabelled = [0,0,0]
 COLOR_DICT = np.array([Sky, Building, Pole, Road, Pavement,
                           Tree, SignSymbol, Fence, Car, Pedestrian, Bicyclist, Unlabelled])
 
+def generate_random_class_colors(num_class):
+      # generate_random_class_colors generates num_class number of colors
+  return np.random.random_integers(0,255,(num_class,3))
 
 def adjustData(img,mask,flag_multi_class):
     if(flag_multi_class):
         img = img / 255
         mask = mask[:,:,:,0] if(len(mask.shape) == 4) else mask[:,:,0]
-        num_class = np.max(mask)+1
-        # new_mask = np.zeros(mask.shape + (num_class,), np.int64)
-        new_mask = np.zeros((mask.shape[0], mask.shape[1], num_class),np.int64) # so that each pixel can be one-hot encoded
+        num_class = int(np.max(mask)) + 1
+        new_mask = np.zeros(mask.shape + (num_class,),np.int64)
         for i in range(num_class):
             #for each pixel in the image, find the class in mask and convert it into one-hot vector
             #index = np.where(mask == i) # indices of those elements whose values are non-zero
             #index_mask = (index[0],index[1],index[2],np.zeros(len(index[0]),dtype = np.int64) + i) if (len(mask.shape) == 4) else (index[0],index[1],np.zeros(len(index[0]),dtype = np.int64) + i)
             #new_mask[index_mask] = 1
             new_mask[mask == i,i] = 1
-        new_mask = np.reshape(new_mask,(new_mask.shape[0],new_mask.shape[1]*new_mask.shape[2],new_mask.shape[3])) if len((mask.shape)==4) else np.reshape(new_mask,(new_mask.shape[0]*new_mask.shape[1],new_mask.shape[2]))
+#         new_mask = np.reshape(new_mask,(new_mask.shape[0],new_mask.shape[1]*new_mask.shape[2],new_mask.shape[3])) if flag_multi_class else np.reshape(new_mask,(new_mask.shape[0]*new_mask.shape[1],new_mask.shape[2]))
         mask = new_mask
     elif(np.max(img) > 1):
         img = img / 255
@@ -118,11 +120,15 @@ def labelVisualize(num_class,color_dict,img):
     img = img[:,:,0] if len(img.shape) == 3 else img
     img_out = np.zeros(img.shape + (3,))
     for i in range(num_class):
-        img_out[img == i,:] = color_dict[i]
+        img_out[img == i,:] = color_dict[i % len(color_dict)] # color_dict only includes 12 classes, segmenting DIC-2CDH-HeLa requires 55 labels
     return img_out / 255
 
 
 def saveResult(save_path,npyfile,test_ids,flag_multi_class = False,num_class = 2):
+#     if num_class > 12:
+#       colors = generate_random_class_colors(num_class) 
+#     else:
+#       colors = COLOR_DICT
     for i,item in enumerate(npyfile):
         img = labelVisualize(num_class,COLOR_DICT,item) if flag_multi_class else item[:,:,0]
         image_name = construct_image_name(str(test_ids[i]),"_predict.tif")
