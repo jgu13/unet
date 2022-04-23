@@ -22,6 +22,9 @@ Unlabelled = [0,0,0]
 COLOR_DICT = np.array([Sky, Building, Pole, Road, Pavement,
                           Tree, SignSymbol, Fence, Car, Pedestrian, Bicyclist, Unlabelled])
 
+def generate_random_class_colors(num_class):
+  # generate_random_class_colors generates num_class number of colors
+  return np.random.random_integers(0,255,(num_class,3))
 
 def adjustData(img,mask,flag_multi_class):
     if(flag_multi_class):
@@ -117,11 +120,15 @@ def labelVisualize(num_class,color_dict,img):
     img = img[:,:,0] if len(img.shape) == 3 else img
     img_out = np.zeros(img.shape + (3,))
     for i in range(num_class):
-        img_out[img == i,:] = color_dict[i]
+        img_out[img == i,:] = color_dict[i % len(color_dict)] # color_dict only includes 12 classes, segmenting DIC-2CDH-HeLa requires 55 labels
     return img_out / 255
 
 
 def saveResult(save_path,npyfile,test_ids,flag_multi_class = False,num_class = 2):
+#     if num_class > 12:
+#       colors = generate_random_class_colors(num_class) 
+#     else:
+#       colors = COLOR_DICT
     for i,item in enumerate(npyfile):
         img = labelVisualize(num_class,COLOR_DICT,item) if flag_multi_class else item[:,:,0]
         image_name = construct_image_name(str(test_ids[i]),"_predict.tif")
