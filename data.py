@@ -124,12 +124,12 @@ def labelVisualize(num_class,color_dict,img):
     return img_out / 255
 
 
-def saveResult(save_path,npyfile,test_ids,flag_multi_class = False,num_class = 2):
+def saveResult(save_path,npyfile,test_ids,image_prefix="",image_suffix=".png",flag_multi_class = False,num_class = 2):
 #     if num_class > 12:
 #       colors = generate_random_class_colors(num_class) 
 #     else:
 #       colors = COLOR_DICT
     for i,item in enumerate(npyfile):
         img = labelVisualize(num_class,COLOR_DICT,item) if flag_multi_class else item[:,:,0]
-        image_name = construct_image_name(str(test_ids[i]),"_predict.tif")
+        image_name = construct_image_name(image_prefix,str(test_ids[i]),"_predict",image_suffix)
         io.imsave(os.path.join(save_path,image_name),img)
