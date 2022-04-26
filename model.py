@@ -57,7 +57,7 @@ def unet(pretrained_weights = None,input_size = (256,256,1), concate=True, expan
 
         model = Model(inputs = inputs, outputs = conv10)
 
-        model.compile(optimizer = Adam(lr = 1e-4), loss = 'binary_crossentropy', metrics = ['accuracy',metrics.MeanPixelAccuracy])
+        model.compile(optimizer = Adam(lr = 1e-4), loss = 'binary_crossentropy', metrics = ['accuracy'])
     else:  
         # no expansive paths
         conv6 = Conv2D(1, 1, activation = 'sigmoid')(UpSampling2D(size = (16,16))(conv5))
