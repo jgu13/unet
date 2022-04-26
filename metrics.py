@@ -1,3 +1,9 @@
+def pixelAccuracy(pred_img, label_img):
+    pixel_correct = np.sum(pred_img == label_img)
+    pixel_labeled = pred_img.shape[0] * pred_img.shape[1]
+    pixel_accuracy = pixel_correct / pixel_labeled
+    return pixel_accuracy, pixel_correct, pixel_labeled
+    
 def MeanPixelAccuracy(pred, label):
     """
     Function to compute the mean pixel accuracy for semantic segmentation between mini-batch tensors
