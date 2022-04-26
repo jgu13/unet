@@ -97,6 +97,23 @@ def testGenerator(test_path,num_image_indices=range(30),target_size = (256,256),
         img = np.reshape(img,img.shape+(1,)) if (not flag_multi_class) else img
         img = np.reshape(img,(1,)+img.shape)
         yield img
+        
+def predGenerator(mask_path,num_image_indices=range(30),target_size = (256,256),image_prefix="",image_suffix='.png',flag_multi_class = False,as_gray = True):
+    for index in num_image_indices:
+        image_name = "".join((image_prefix,str(index),image_suffix))
+        img = io.imread(os.path.join(mask_path,image_name),as_gray = as_gray)
+        img = img // 255
+        img = trans.resize(img,target_size,preserve_range=True)
+        yield img
+
+
+def maskGenerator(mask_path,num_image_indices=range(30),target_size = (256,256),image_prefix="",image_suffix='.png',flag_multi_class = False,as_gray = True):
+    for index in num_image_indices:
+        image_name = "".join((image_prefix,str(index),image_suffix))
+        img = io.imread(os.path.join(mask_path,image_name),as_gray = as_gray)
+        img = img // 65535
+        img = trans.resize(img,target_size,preserve_range=True)
+        yield img
 
 
 def geneTrainNpy(image_path,mask_path,flag_multi_class = False,num_class = 2,image_prefix = "image",mask_prefix = "mask",image_as_gray = True,mask_as_gray = True):
