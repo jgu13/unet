@@ -9,7 +9,7 @@ from keras.layers import *
 from tensorflow.keras.optimizers import Adam
 from keras.callbacks import ModelCheckpoint, LearningRateScheduler
 from keras import backend as keras
-from metrics import *
+# from metrics import *
 
 
 def unet(pretrained_weights = None,input_size = (256,256,1), concate=True, expansive_path=True):
